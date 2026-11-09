@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "_comment": "Editable rules. A mod matches a member when its name, file name or tags match any pattern (case-insensitive regular expressions). If more than max_enabled members of one rule are enabled, fcmh reports the rule. Copy this file and pass --rules to use your own version.",
+  "rules": [
+    {
+      "id": "youth-academy-overhaul",
+      "severity": "error",
+      "max_enabled": 1,
+      "description": "These mods all rewrite youth academy / regen generation. Pick ONE academy direction.",
+      "advice": "Keep one academy mod enabled. If you keep KIARIKA Career Mode Overhaul together with an academy mod, disable KIARIKA's youth/regen section first (see its mod page).",
+      "members": [
+        {"label": "KIARIKA Career Mode Overhaul (youth/regen section)", "patterns": ["kiarika.*career", "career.*overhaul.*kiarika"]},
+        {"label": "Youth Academy Redux", "patterns": ["youth\\s*academy\\s*redux"]},
+        {"label": "Youth Academy Re-adjusted", "patterns": ["youth\\s*academy\\s*re-?adjusted"]},
+        {"label": "Any mod tagged academy-overhaul", "patterns": ["^tag:academy-overhaul$"]}
+      ]
+    },
+    {
+      "id": "gameplay-overhaul",
+      "severity": "error",
+      "max_enabled": 1,
+      "description": "Two gameplay overhauls edit the same gameplay values and must not run together.",
+      "advice": "Keep only one gameplay overhaul enabled.",
+      "members": [
+        {"label": "Anth James gameplay mod", "patterns": ["anth\\s*james"]},
+        {"label": "TrueFoot gameplay mod", "patterns": ["true\\s*foot"]},
+        {"label": "Any mod tagged gameplay-overhaul", "patterns": ["^tag:gameplay-overhaul$"]}
+      ]
+    }
+  ]
+}

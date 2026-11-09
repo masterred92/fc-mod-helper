@@ -1,0 +1,4 @@
+export_date,season,source,playerid,name,team,age,ovr,pot,position,playstyles_bits,playstyles_plus_bits,playstyles_count,playstyles_plus_count,le_version
+2027-08-01,2027/28,senior,460001,Test Prospect A,Example FC,17,69,86,ST,7,0,3,0,v26.3.6
+2027-08-01,2027/28,senior,460003,<b>Escape Me</b>,Example FC,20,70,80,CAM,7,1,3,1,v26.3.6
+2027-08-01,2027/28,academy,460004,Late Signing D,Example FC,15,48,88,GK,,,,,v26.3.6

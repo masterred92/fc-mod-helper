@@ -1,0 +1,3 @@
+export_date,season,source,playerid,name,team,age,ovr,pot,position,playstyles_bits,playstyles_plus_bits,playstyles_count,playstyles_plus_count,le_version
+2027-01-15,2026/27,academy,460001,Test Prospect A,Example FC,16,63,85,ST,3,0,2,0,v26.3.6
+2027-01-15,2026/27,academy,460002,"Prospect, ""Quoted"" B",Example FC,17,62,79,CB,0,0,0,0,v26.3.6

@@ -1,0 +1,34 @@
+{
+  "schema": 1,
+  "game": "fc26",
+  "install_path": "C:\\Program Files\\EA Games\\EA SPORTS FC 26",
+  "current_build": "1.6.6",
+  "exe_version": "1.0.139.20381",
+  "paths": {
+    "fmm_dir": "D:\\Modding\\FIFA Mod Manager",
+    "fmm_exe": "D:\\Modding\\FIFA Mod Manager\\FIFA Mod Manager.exe",
+    "backup_dir": "D:\\Modding\\fcmh-backups"
+  },
+  "mods": [
+    {
+      "name": "Example Youth Academy Mod",
+      "file": "D:\\Modding\\mods\\example-youth-academy.fifamod",
+      "pinned_tu": "1.6.6",
+      "author_url": "https://www.nexusmods.com/easportsfc26/mods/0",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "enabled": true,
+      "tags": ["academy-overhaul"],
+      "notes": "Fake example entry. Replace with your own mods."
+    },
+    {
+      "name": "Example Performance Mod",
+      "file": "D:\\Modding\\mods\\example-performance.fifamod",
+      "pinned_tu": "1.6.5",
+      "author_url": "https://www.nexusmods.com/easportsfc26/mods/0",
+      "sha256": "",
+      "enabled": true,
+      "tags": ["performance"],
+      "notes": "Fake example entry pinned to an older TU, so `fcmh check` flags it."
+    }
+  ]
+}

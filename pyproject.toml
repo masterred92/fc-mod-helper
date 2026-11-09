@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fc-mod-helper"
+version = "0.1.0"
+description = "Patch-safety, backups and a youth academy tracker for EA SPORTS FC (PC) offline Career Mode modding."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.11"
+authors = [{ name = "fc-mod-helper contributors" }]
+keywords = ["ea-fc", "fc26", "fc27", "career-mode", "modding", "live-editor"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: Microsoft :: Windows",
+  "Environment :: Console",
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=7", "lupa>=2"]
+
+[project.scripts]
+fcmh = "fcmh.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/masterred92/fc-mod-helper"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+fcmh = ["data/*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

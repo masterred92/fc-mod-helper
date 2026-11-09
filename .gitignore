@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+build/
+dist/
+.pytest_cache/
+
+# Secrets and local config
+.env
+.env.*
+
+# User data: ledgers, backups, exports, reports
+ledger.json
+*.ledger.json
+!examples/ledger.example.json
+backups/
+*.zip
+*.zip.partial
+*.csv
+!tests/fixtures/**/*.csv
+fcmh-academy-report/
+
+# Never commit mods, game files or tool binaries
+*.fifamod
+*.fbmod
+*.dll
+*.exe
+FIFAModData/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
