@@ -95,7 +95,7 @@ jobs:
           This app contains no mods, no EA files and no Live Editor.
           NOTES
           if gh release view "$TAG" -R "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            gh release upload "$TAG" "FC Mod Helper.exe" --clobber -R "$GITHUB_REPOSITORY"
+            gh release upload "$TAG" "FC Mod Helper.exe#FC Mod Helper.exe" --clobber -R "$GITHUB_REPOSITORY"
           else
-            gh release create "$TAG" "FC Mod Helper.exe" -R "$GITHUB_REPOSITORY" --title "FC Mod Helper $TAG" --notes-file notes.md
+            gh release create "$TAG" "FC Mod Helper.exe#FC Mod Helper.exe" -R "$GITHUB_REPOSITORY" --title "FC Mod Helper $TAG" --notes-file notes.md
           fi

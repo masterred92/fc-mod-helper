@@ -2,6 +2,9 @@
 
 **Download `FC Mod Helper.exe` from [Releases](https://github.com/masterred92/fc-mod-helper/releases/latest) and double-click it.**
 
+Direct link: [FC Mod Helper.exe (latest)](https://github.com/masterred92/fc-mod-helper/releases/latest/download/FC.Mod.Helper.exe).
+GitHub saves it as `FC.Mod.Helper.exe` (it swaps spaces for dots); it's the same app.
+
 That's it. No Python, no terminal, no typing folder paths.
 
 > **Windows may say "Windows protected your PC".** The app isn't code-signed (signing costs money),
