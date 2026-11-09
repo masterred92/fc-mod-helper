@@ -72,8 +72,14 @@ def dots(d):
         d.ellipse((x - 10, 54, x + 10, 74), fill=W)
 
 
+def magnifier(d):
+    d.ellipse((18, 18, 84, 84), outline=W, width=13)
+    d.line((76, 76, 108, 108), fill=W, width=18)
+    d.ellipse((99, 99, 117, 117), fill=W)
+
+
 ICONS = {"play": play, "add": plus, "update": update, "backup": backup, "restore": restore,
-         "academy": star, "online": globe, "more": dots}
+         "academy": star, "scout": magnifier, "online": globe, "more": dots}
 
 
 def app_icon():

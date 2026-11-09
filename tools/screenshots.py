@@ -103,6 +103,28 @@ def write_academy(folder: Path) -> None:
                 writer.writerow([date, season, "academy", pid, name, "Demo Town FC", age, ovr, pot, pos, 3, 0, 2, 0, "demo"])
 
 
+def write_scouting(folder: Path) -> None:
+    head = ["game", "export_date", "playerid", "name", "age", "positions", "nationality", "ovr", "potential",
+            "pot_swing_low", "pot_variance", "tier", "playstyles", "playstyles_plus", "traits", "status",
+            "scout_report", "months_in_squad", "raw_styles", "le_version"]
+    rows = [
+        (460201, "Mateus Rocha", 15, "ST LW", "Brazil", 57, 88, "Technical; Rapid", "Finesse Shot; Chip Shot", "", 2),
+        (460202, "Kofi Mensah", 14, "CM CDM", "Ghana", 52, 83, "Intercept; Tiki Taka", "Incisive Pass", "Team Player", 3),
+        (460203, "Jonas Berg", 16, "GK", "Norway", 58, 81, "GK Far Reach", "", "", 2),
+        (460204, "Diego Lopez", 17, "CB", "Spain", 63, 78, "Block; Anticipate", "", "", 1),
+        (460205, "Yuto Sato", 16, "RW", "Japan", 59, 76, "Trickster; Quick Step", "", "", 3),
+        (460206, "Liam Walsh", 17, "LB", "Ireland", 56, 69, "Relentless", "", "", 4),
+        (460207, "Noah Klein", 16, "CAM", "Germany", 61, 86, "Technical", "Incisive Pass", "", 1),
+    ]
+    with open(folder / "scout_2026-09-01.csv", "w", newline="", encoding="utf-8") as handle:
+        writer = csv.writer(handle)
+        writer.writerow(head)
+        for pid, name, age, pos, nat, ovr, pot, ps, psp, traits, var in rows:
+            signed = "signed (guess)" if pid == 460207 else "not signed (guess)"
+            writer.writerow(["FC 26", "2026-09-01", pid, name, age, pos, nat, ovr, pot, 0, var, 2, ps, psp, traits,
+                             signed, "Scout A. Demo in Brazil" if nat == "Brazil" else "", 0, "", "demo"])
+
+
 def main() -> None:
     base = Path(tempfile.mkdtemp(prefix="fcmh-demo-"))
     demo = build_demo(base)
@@ -161,6 +183,11 @@ def main() -> None:
     grab(root, "07-online.png")
     if app.open_dialog:
         app.open_dialog.close(None)
+
+    write_scouting(logic.scouting_dir(app.ledger))
+    app.scout_show_signed = True
+    app.on_scout()
+    grab(root, "09-scout-preview.png")
     root.destroy()
 
     academy_dir = Path(app.ledger.resolved_paths().get("academy_dir"))

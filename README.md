@@ -32,6 +32,7 @@ FC Mod Helper is a free helper for **EA SPORTS FC 26 / FC 27 on PC** players who
 | **Game updated? Fix my mods** | After a game update: asks before cleaning up old mod files (never your saves), and opens the pages of the mods that need a new version. When you drop updated mods into your **Mods** folder, it spots them by itself. |
 | **Back up now** / **Restore** | Saves a copy of your Career saves and Mod Manager settings. Restore shows a list of backups by date, and always backs up what you have now first. |
 | **My academy** | If Live Editor is installed, puts the academy script in its scripts folder for you. Then shows your young players' growth as a page with arrows and charts. |
+| **Scout preview** | (FC 26; FC 27 coming soon.) Puts a read-only scout script in Live Editor's scripts folder for you. Run it once in Career Mode and the players your youth scouts found show up here: real potential (number + stars), PlayStyles, gold **PlayStyles+**, hidden traits, and a green **Sign him** badge on the best ones with one plain reason each ("Potential 88, age 15, 2 PlayStyles+"). New reports appear by themselves. **Make a web page** saves it as a page. See [docs/scout-preview.md](docs/scout-preview.md). |
 | **Playing online?** | A short checklist of what to switch off. It doesn't change anything. |
 
 The coloured bar at the top always tells you, in one sentence, whether you're good to go
@@ -76,6 +77,8 @@ Then press **Add mods**, pick the files, and press **Play safely** whenever you 
 
 ![My academy report](docs/screenshots/08-academy-report.png)
 
+![Scout preview with demo players](docs/screenshots/09-scout-preview.png)
+
 *(Screenshots use made-up demo data.)*
 
 ## What it never does
@@ -90,7 +93,9 @@ Then press **Add mods**, pick the files, and press **Play safely** whenever you 
 
 ## Where things are kept
 
-Everything the app makes goes in `Documents\FC Mod Helper` (`Mods`, `Backups`, `Academy`).
+Everything the app makes goes in `Documents\FC Mod Helper` (`Mods`, `Backups`, `Academy`, `Scouting`).
+The star grades and the **Sign him** rules are in `Documents\FC Mod Helper\Scouting\scout-grades.json`;
+change the numbers there if you like.
 Its settings are in `%APPDATA%\fc-mod-helper\ledger.json`. More detail: [docs/paths.md](docs/paths.md).
 
 ## Not tested on a real PC yet
@@ -101,6 +106,8 @@ real gaming PC with FC installed**. In particular, please check:
 - that the app finds your game, Mod Manager and Live Editor (otherwise pick them; that's fine);
 - the game version it shows matches your game;
 - the academy script, which hasn't been run in-game yet. See [docs/academy-tracker.md](docs/academy-tracker.md).
+- the scout preview script, which hasn't been run in-game yet either. Compare it with your in-game scout
+  report the first time. See [docs/scout-preview.md](docs/scout-preview.md#what-to-check-in-game).
 
 ## For power users: the command line
 

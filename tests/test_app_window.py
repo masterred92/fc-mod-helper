@@ -65,3 +65,42 @@ def test_first_run_and_buttons(root, fake_env, monkeypatch):
 
 def test_self_test():
     assert app_mod.self_test() == 0
+
+
+def test_scout_preview_window(root, fake_env, monkeypatch):
+    import os
+    import time
+    from conftest import FIXTURES
+
+    ledger = fake_env.load()
+    ledger.app["setup_done"] = True
+    ledger.save()
+    app = app_mod.App(root, fake_env.ledger_path, probe=EmptyProbe({}), detector=no_detect, no_wait=True)
+    app.start()
+    root.update()
+    app.on_scout()  # no report yet -> instructions, no crash
+    folder = logic.scouting_dir(app.ledger)
+    source = FIXTURES / "scouting" / "scout_2026-09-01.csv"
+    (folder / source.name).write_bytes(source.read_bytes())
+    app.poll_scouting()  # main screen: remembers it quietly the first time
+    app.on_scout()
+    root.update()
+    assert app.screen == "scout"
+    assert len(app._scout_players()) == 7  # signed one hidden
+    app._scout_signed(True)
+    assert len(app._scout_players()) == 8
+    app._scout_sort("age")
+    assert app._scout_players()[0].age == 14
+    app.export_scout()
+    assert app.last_export.exists()
+    # a newer report appears while the screen is open -> it refreshes by itself
+    newer = folder / "scout_2026-10-01.csv"
+    newer.write_text(source.read_text().replace("Example Striker", "Brand New Kid"))
+    later = time.time() + 5
+    os.utime(newer, (later, later))
+    app.poll_scouting()
+    root.update()
+    assert app.scout_result.csv == newer
+    assert any(p.name == "Brand New Kid" for p in app.scout_result.players)
+    app.show_main()
+    root.update()

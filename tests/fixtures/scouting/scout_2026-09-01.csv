@@ -1,0 +1,9 @@
+game,export_date,playerid,name,age,positions,nationality,ovr,potential,pot_swing_low,pot_variance,tier,playstyles,playstyles_plus,traits,status,scout_report,months_in_squad,raw_styles,le_version
+FC 26,2026-09-01,460101,Example Striker,15,ST LW,Brazil,56,88,-2,3,3,Technical; Rapid,Finesse Shot; Chip Shot,Solid Player,not signed (guess),Scout One in Brazil,0,t1=1 it1=1 t2=0 it2=0,mock
+FC 26,2026-09-01,460102,Example Keeper,16,GK,England,58,84,0,2,2,GK Far Reach,,,not signed (guess),Scout One in Brazil,0,,mock
+FC 26,2026-09-01,460103,Young Winger,14,RW,Spain,50,82,0,4,2,Trickster,Quick Step,,not signed (guess),,0,,mock
+FC 26,2026-09-01,460104,Steady Defender,17,CB,Germany,62,77,1,1,1,Block,,,not signed (guess),,0,,mock
+FC 26,2026-09-01,460105,Already Signed,16,CM,France,60,90,0,0,3,,Incisive Pass,,signed (guess),,5,,mock
+FC 26,2026-09-01,460106,"Comma, Quote ""Kid""",16,CAM,Italy,55,72,0,5,1,,,,not signed (guess),,0,,mock
+FC 26,2026-09-01,460107,Late Bloomer,17,CDM,Japan,57,64,0,5,0,,,,not signed (guess),,0,,mock
+FC 26,2026-09-01,460108,Low Ceiling,17,LB,Wales,52,58,0,5,0,,,,not signed (guess),,0,,mock

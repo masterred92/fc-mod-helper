@@ -18,7 +18,7 @@ from importlib import resources
 from pathlib import Path
 from typing import Callable
 
-from fcmh import academy, backup, checks, conflicts, detect, patch
+from fcmh import academy, backup, checks, conflicts, detect, patch, scouting
 from fcmh import version as version_mod
 from fcmh.ledger import Ledger, Mod, default_ledger_path, sha256_file
 from fcmh.paths import GAMES
@@ -85,7 +85,7 @@ def setup_items(found: detect.Detection, version_info: dict | None) -> list[Setu
                            note="Cleaned after game updates"))
     items.append(SetupItem("live_editor", "Live Editor (optional)", found.live_editor_dir,
                            found.live_editor_dir is not None, optional=True,
-                           note="" if found.live_editor_dir else "Only needed for My academy"))
+                           note="" if found.live_editor_dir else "Only needed for My academy and Scout preview"))
     return items
 
 
@@ -117,11 +117,12 @@ def save_setup(ledger_path: Path, game: str, install: Path, *, tu: str | None, e
         "backup_dir": home / "Backups",
         "academy_dir": home / "Academy",
         "mods_dir": home / "Mods",
+        "scouting_dir": home / "Scouting",
     }
     for key, value in values.items():
         if value is not None:
             ledger.paths[key] = str(value)
-    for folder in ("Backups", "Academy", "Mods"):
+    for folder in ("Backups", "Academy", "Mods", "Scouting"):
         (home / folder).mkdir(parents=True, exist_ok=True)
     ledger.app["setup_done"] = True
     ledger.app["accepted_warning"] = True
@@ -565,13 +566,13 @@ def watch_mods_folder(ledger: Ledger, save: bool = True) -> WatchResult:
 LUA_NAME = "fcmh_academy_export.lua"
 
 
-def lua_source() -> str:
-    return resources.files("fcmh.lua").joinpath(LUA_NAME).read_text(encoding="utf-8")
+def lua_source(name: str = LUA_NAME) -> str:
+    return resources.files("fcmh.lua").joinpath(name).read_text(encoding="utf-8")
 
 
-def lua_with_output_dir(folder: Path) -> str:
+def lua_with_output_dir(folder: Path, name: str = LUA_NAME) -> str:
     escaped = str(folder).replace("\\", "\\\\").replace('"', '\\"')
-    text = lua_source()
+    text = lua_source(name)
     return text.replace("local OUTPUT_DIR = nil\n", f'local OUTPUT_DIR = "{escaped}"\n', 1)
 
 
@@ -621,3 +622,91 @@ def academy_report(ledger: Ledger) -> AcademyResult:
     prospects = academy.merge(files)
     paths = academy.write_report(prospects, folder / "report")
     return AcademyResult(f"Your academy report has {len(prospects)} players.", None, paths["html"], imported)
+
+
+# ------------------------------------------------------------------ scout preview
+SCOUT_LUA_NAME = "fcmh_scout_preview.lua"
+SCOUT_GAMES = {"fc26": "ready", "fc27": "coming soon"}
+
+
+@dataclass
+class ScoutResult:
+    sentence: str
+    script_path: Path | None = None
+    csv: Path | None = None
+    players: list = field(default_factory=list)
+    table_dump: Path | None = None
+
+
+def scouting_dir(ledger: Ledger) -> Path:
+    folder = ledger.resolved_paths().get("scouting_dir") or (app_home() / "Scouting")
+    folder = Path(folder)
+    folder.mkdir(parents=True, exist_ok=True)
+    return folder
+
+
+def scout_supported(ledger: Ledger) -> bool:
+    return SCOUT_GAMES.get(ledger.game) == "ready"
+
+
+def scout_setup(ledger: Ledger) -> ScoutResult:
+    """Copies the read-only scout script into Live Editor's lua folder."""
+    folder = scouting_dir(ledger)
+    scouting.ensure_grades_file(folder)
+    if not scout_supported(ledger):
+        return ScoutResult("Scout preview works with FC 26 for now. FC 27 is coming soon.")
+    le = ledger.resolved_paths().get("live_editor_dir")
+    if not le or not (Path(le) / "lua").is_dir():
+        return ScoutResult("I couldn't find Live Editor. Get it from its official page, then show me its folder "
+                           "(More > Find Live Editor).")
+    target = Path(le) / "lua" / SCOUT_LUA_NAME
+    target.write_text(lua_with_output_dir(folder, SCOUT_LUA_NAME), encoding="utf-8")
+    return ScoutResult("In Career Mode press F9, then Features > Lua Engine, open "
+                       f"'{SCOUT_LUA_NAME}' and press Execute. Your scouted players will show up here by themselves.",
+                       target)
+
+
+def import_scout_csvs(ledger: Ledger) -> int:
+    """Copies scout files the script left on the Desktop into the Scouting folder."""
+    folder = scouting_dir(ledger)
+    count = 0
+    for source in scouting.desktop_csvs():
+        target = folder / source.name
+        if not target.exists() or source.stat().st_mtime > target.stat().st_mtime:
+            shutil.copy2(source, target)
+            count += 1
+    return count
+
+
+def newest_scout_csv(ledger: Ledger) -> Path | None:
+    import_scout_csvs(ledger)
+    return scouting.newest_csv([scouting_dir(ledger)])
+
+
+def scout_preview(ledger: Ledger) -> ScoutResult:
+    folder = scouting_dir(ledger)
+    newest = newest_scout_csv(ledger)
+    dump = scouting.newest_table_dump(folder)
+    if newest is None or (dump is not None and dump.stat().st_mtime_ns > newest.stat().st_mtime_ns):
+        setup = scout_setup(ledger)
+        if dump is not None:
+            return ScoutResult("The script couldn't find your scouted players in this game version. It saved a list "
+                               f"of what it could see in '{dump.name}'. Please send that file so it can be fixed.",
+                               setup.script_path, None, [], dump)
+        return ScoutResult("No scout report yet. " + setup.sentence, setup.script_path)
+    try:
+        players = scouting.load_csv(newest, scouting.load_grades(folder))
+    except (OSError, ValueError, KeyError) as exc:
+        return ScoutResult(f"I couldn't read {newest.name} ({exc}). Run the script in the game again.", None, newest)
+    waiting = sum(1 for p in players if not p.signed)
+    best = sum(1 for p in players if p.sign_him)
+    sentence = (f"{waiting} players are waiting to be signed." if waiting != 1 else "1 player is waiting to be signed.")
+    if best:
+        sentence += f" {best} marked 'Sign him'."
+    return ScoutResult(sentence, None, newest, players)
+
+
+def scout_export_html(ledger: Ledger, result: ScoutResult) -> Path:
+    folder = scouting_dir(ledger)
+    name = (result.csv.stem if result.csv else "scout") + ".html"
+    return scouting.write_html(result.players, folder / name, source=result.csv.name if result.csv else "")

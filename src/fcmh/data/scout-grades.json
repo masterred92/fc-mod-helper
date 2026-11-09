@@ -1,0 +1,57 @@
+{
+  "_help": "FC Mod Helper scout preview settings. Change the numbers, save, then press Scout preview again. Stars: a player gets the stars of the first line his potential reaches. Sign him: up to 'how_many' unsigned players with the best score get the badge. Score = potential + young bonus + PlayStyles+ bonus.",
+  "stars": [
+    {
+      "min_potential": 85,
+      "stars": 5
+    },
+    {
+      "min_potential": 80,
+      "stars": 4.5
+    },
+    {
+      "min_potential": 75,
+      "stars": 4
+    },
+    {
+      "min_potential": 70,
+      "stars": 3.5
+    },
+    {
+      "min_potential": 65,
+      "stars": 3
+    },
+    {
+      "min_potential": 60,
+      "stars": 2.5
+    },
+    {
+      "min_potential": 55,
+      "stars": 2
+    },
+    {
+      "min_potential": 50,
+      "stars": 1.5
+    },
+    {
+      "min_potential": 0,
+      "stars": 1
+    }
+  ],
+  "sign_him": {
+    "how_many": 3,
+    "min_potential": 75,
+    "young_age": 17,
+    "bonus_per_year_younger": 2,
+    "bonus_per_playstyle_plus": 3
+  },
+  "screen_range_percent": [
+    16,
+    13,
+    11,
+    9,
+    6,
+    4
+  ],
+  "_help_range": "GUESS: the game shows a potential range on screen. FIFA 18's scout.ini (POTENTIAL_VARIANCE_PERC_0..5) set its width in percent, picked by the player's 'potentialvariance' number. FC 26 values are unknown, so these are the FIFA 18 ones."
+}

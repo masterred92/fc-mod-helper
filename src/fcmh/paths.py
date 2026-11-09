@@ -32,6 +32,7 @@ PATH_KEYS = (
     "editor_cache_file", # Optional: FIFA Editor Tool modding cache, cleared after a patch
     "backup_dir",        # Where fcmh writes backup zips
     "academy_dir",       # Where the Lua academy exporter writes CSVs
+    "scouting_dir",      # Where the Lua scout preview writes scout_<date>.csv
     "mods_dir",          # Folder the app watches for new/updated mod files
     "live_editor_dir",   # Live Editor folder (the app copies the academy script into its lua folder)
 )
@@ -70,6 +71,7 @@ def default_paths(game: str, install_path: str | os.PathLike | None) -> dict[str
         "backup_dir": lad / "fc-mod-helper" / "backups",
         "academy_dir": user_profile() / "Desktop",
         "mods_dir": user_profile() / "Documents" / "FC Mod Helper" / "Mods",
+        "scouting_dir": user_profile() / "Documents" / "FC Mod Helper" / "Scouting",
         "live_editor_dir": None,
     }
 

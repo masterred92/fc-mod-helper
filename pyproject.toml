@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fc-mod-helper"
-version = "0.2.0"
+version = "0.3.0"
 description = "Patch-safety, backups and a youth academy tracker for EA SPORTS FC (PC) offline Career Mode modding."
 readme = "README.md"
 license = { text = "MIT" }
