@@ -10,8 +10,8 @@
       "advice": "Keep one academy mod enabled. If you keep KIARIKA Career Mode Overhaul together with an academy mod, disable KIARIKA's youth/regen section first (see its mod page).",
       "members": [
         {"label": "KIARIKA Career Mode Overhaul (youth/regen section)", "patterns": ["kiarika.*career", "career.*overhaul.*kiarika"]},
-        {"label": "Youth Academy Redux", "patterns": ["youth\\s*academy\\s*redux"]},
-        {"label": "Youth Academy Re-adjusted", "patterns": ["youth\\s*academy\\s*re-?adjusted"]},
+        {"label": "Youth Academy Redux", "patterns": ["youth[\\s_-]*academy[\\s_-]*redux"]},
+        {"label": "Youth Academy Re-adjusted", "patterns": ["youth[\\s_-]*academy[\\s_-]*re[\\s_-]?adjusted"]},
         {"label": "Any mod tagged academy-overhaul", "patterns": ["^tag:academy-overhaul$"]}
       ]
     },
@@ -22,8 +22,8 @@
       "description": "Two gameplay overhauls edit the same gameplay values and must not run together.",
       "advice": "Keep only one gameplay overhaul enabled.",
       "members": [
-        {"label": "Anth James gameplay mod", "patterns": ["anth\\s*james"]},
-        {"label": "TrueFoot gameplay mod", "patterns": ["true\\s*foot"]},
+        {"label": "Anth James gameplay mod", "patterns": ["anth[\\s_-]*james"]},
+        {"label": "TrueFoot gameplay mod", "patterns": ["true[\\s_-]*foot"]},
         {"label": "Any mod tagged gameplay-overhaul", "patterns": ["^tag:gameplay-overhaul$"]}
       ]
     }

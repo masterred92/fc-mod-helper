@@ -1,4 +1,4 @@
-"""Runs lua/fcmh_academy_export.lua against a small mock of the Live Editor API.
+"""Runs src/fcmh/lua/fcmh_academy_export.lua against a small mock of the Live Editor API.
 
 This proves the script's logic and error handling, not that the real Live Editor
 exposes these exact fields. Needs the optional `lupa` package (pip install lupa).
@@ -15,7 +15,7 @@ try:
 except ImportError:  # pragma: no cover
     lua_module = lupa
 
-SCRIPT = Path(__file__).resolve().parents[1] / "lua" / "fcmh_academy_export.lua"
+SCRIPT = Path(__file__).resolve().parents[1] / "src" / "fcmh" / "lua" / "fcmh_academy_export.lua"
 
 MOCK = r"""
 -- Minimal Live Editor mock, shaped like the official example scripts use it.

@@ -1,5 +1,19 @@
 # Default folders (and how to change them)
 
+The app's first-run screen finds these for you and lets you pick any it can't find
+(**More > Run setup again** to redo it). It stores its own files in `Documents\FC Mod Helper`
+(`Mods`, `Backups`, `Academy`).
+
+How the app looks for things:
+
+- **Game:** the EA Sports registry keys, Windows "installed apps" entries, `Program Files\EA Games`,
+  Steam libraries (from Steam's registry entry and `libraryfolders.vdf`), Epic manifests and
+  `Epic Games` folders. A folder counts only if it contains `FC26.exe` / `FC27.exe`.
+- **FIFA Mod Manager:** searches Downloads, Desktop, Documents (4 folders deep) and Program Files
+  (2 deep) for `FIFA Mod Manager.exe`, newest first.
+- **Live Editor:** `X:\FC 26 Live Editor` on each drive, or a folder named like "FC 26 Live Editor"
+  with a `lua` folder inside, in Downloads/Desktop/Documents.
+
 Every folder fcmh uses can be overridden in the ledger with `fcmh paths --set KEY PATH`.
 Run `fcmh paths` to see what fcmh is using and whether each folder exists.
 
@@ -12,7 +26,9 @@ Run `fcmh paths` to see what fcmh is using and whether each folder exists.
 | `fmm_dir` | *(not set)* | FIFA Mod Manager's folder (its profiles and config live next to the program). Backed up as `fmm`. | FIFA Mod Manager is portable, so set this to wherever you unzipped it. |
 | `fmm_exe` | *(not set)* | Started by `fcmh launch`. | Set to the Mod Manager `.exe`. |
 | `backup_dir` | `%LOCALAPPDATA%\fc-mod-helper\backups` | Where backup zips go. | Your choice; another drive is safer. |
-| `academy_dir` | `%USERPROFILE%\Desktop` | Where `fcmh academy report` looks for CSVs. | Matches the Lua script's default output folder. |
+| `academy_dir` | `%USERPROFILE%\Desktop` (app: `Documents\FC Mod Helper\Academy`) | Where academy CSVs are read from. | The app points the Lua script here. |
+| `mods_dir` | `Documents\FC Mod Helper\Mods` | Folder the app watches for new and updated mod files. | Your choice. |
+| `live_editor_dir` | *(found by the app)* | Live Editor folder; the academy script goes in its `lua` folder. | Unverified folder layout. |
 
 The default install path is `C:\Program Files\EA Games\EA SPORTS FC 26` (EA app default) and the
 executable is `FC26.exe`. If you installed elsewhere, pass `--install` to `fcmh init`.

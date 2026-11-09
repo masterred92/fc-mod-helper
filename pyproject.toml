@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fc-mod-helper"
-version = "0.1.0"
+version = "0.2.0"
 description = "Patch-safety, backups and a youth academy tracker for EA SPORTS FC (PC) offline Career Mode modding."
 readme = "README.md"
 license = { text = "MIT" }
@@ -21,9 +21,14 @@ dependencies = []
 
 [project.optional-dependencies]
 dev = ["pytest>=7", "lupa>=2"]
+app = ["tkinterdnd2>=0.4"]
+build = ["pyinstaller>=6", "tkinterdnd2>=0.4"]
 
 [project.scripts]
 fcmh = "fcmh.cli:main"
+
+[project.gui-scripts]
+fc-mod-helper = "fcmh.app:main"
 
 [project.urls]
 Homepage = "https://github.com/masterred92/fc-mod-helper"
@@ -32,7 +37,7 @@ Homepage = "https://github.com/masterred92/fc-mod-helper"
 where = ["src"]
 
 [tool.setuptools.package-data]
-fcmh = ["data/*.json"]
+fcmh = ["data/*.json", "lua/*.lua", "assets/*.png", "assets/*.ico"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

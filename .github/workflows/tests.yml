@@ -3,6 +3,7 @@ name: tests
 on:
   push:
     branches: [main]
+    tags: ["v*"]
   pull_request:
 
 permissions:
@@ -23,9 +24,78 @@ jobs:
           python-version: ${{ matrix.python }}
       - name: Install
         run: python -m pip install -e ".[dev]"
-      - name: Test
+      - name: Install Xvfb (Linux, for the window test)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update -q && sudo apt-get install -y -q xvfb
+      - name: Test (Windows)
+        if: runner.os == 'Windows'
         run: python -m pytest -v
+      - name: Test (Linux)
+        if: runner.os == 'Linux'
+        run: xvfb-run -a python -m pytest -v
       - name: CLI smoke test
         run: |
           fcmh --version
           fcmh online-checklist
+
+  build-exe:
+    needs: test
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: python -m pip install ".[build]"
+      - name: Build FC Mod Helper.exe
+        run: >
+          pyinstaller --noconfirm --onefile --windowed
+          --name "FC Mod Helper"
+          --icon src/fcmh/assets/app.ico
+          --paths src
+          --collect-submodules fcmh
+          --collect-data fcmh
+          --collect-all tkinterdnd2
+          tools/app_entry.py
+      - name: Self-test the exe
+        shell: pwsh
+        run: |
+          $p = Start-Process -FilePath "dist\FC Mod Helper.exe" -ArgumentList "--self-test" -Wait -PassThru
+          if ($p.ExitCode -ne 0) { throw "self-test failed with exit code $($p.ExitCode)" }
+          Get-Item "dist\FC Mod Helper.exe" | Select-Object Name, Length
+      - uses: actions/upload-artifact@v4
+        with:
+          name: FC-Mod-Helper-exe
+          path: dist/FC Mod Helper.exe
+          if-no-files-found: error
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build-exe
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: FC-Mod-Helper-exe
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          cat > notes.md <<'NOTES'
+          **Download `FC Mod Helper.exe` below and double-click it.** No Python or terminal needed.
+
+          Windows may show "Windows protected your PC" because the app isn't code-signed.
+          Click **More info**, then **Run anyway**.
+
+          Offline Career Mode only. EA's rules don't allow mods; use them at your own risk and never go online with mods or Live Editor on.
+          This app contains no mods, no EA files and no Live Editor.
+          NOTES
+          if gh release view "$TAG" -R "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$TAG" "FC Mod Helper.exe" --clobber -R "$GITHUB_REPOSITORY"
+          else
+            gh release create "$TAG" "FC Mod Helper.exe" -R "$GITHUB_REPOSITORY" --title "FC Mod Helper $TAG" --notes-file notes.md
+          fi

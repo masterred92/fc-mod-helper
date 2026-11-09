@@ -335,8 +335,17 @@ def cmd_academy_report(args, ui: UI) -> int:
 
 
 def cmd_gui(args, ui: UI) -> int:
-    from fcmh import gui
-    return gui.run(args.ledger)
+    try:
+        from fcmh import app
+    except ImportError:
+        ui.out("Tkinter isn't available in this Python. Use the FC Mod Helper.exe download instead.")
+        return EXIT_ERROR
+    app.set_dpi_awareness()
+    root = app.make_root()
+    root.geometry("940x780")
+    app.App(root, Path(args.ledger)).start()
+    root.mainloop()
+    return EXIT_OK
 
 
 # ---------------------------------------------------------------- parser
@@ -443,7 +452,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--input", action="append", help="CSV file or folder (repeatable; default: academy_dir)")
     p.add_argument("--out", help="Output folder (default: <input>/fcmh-academy-report)")
 
-    add("gui", cmd_gui, "Open the simple Tkinter window")
+    add("gui", cmd_gui, "Open the FC Mod Helper window")
     return parser
 
 

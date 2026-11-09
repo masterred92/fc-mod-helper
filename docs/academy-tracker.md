@@ -7,9 +7,14 @@
 ## 1. Export a snapshot (in game)
 
 1. Get Live Editor for your game build from its official source and start Career Mode with it.
-2. Press **F9 → Features → Lua Engine**, open `lua/fcmh_academy_export.lua` and press **Execute**.
-3. A message box says how many players were exported and where the CSV went
-   (default: your Desktop, `fcmh_academy_YYYY-MM-DD.csv`, using the **in-game** date).
+2. In the app, press **My academy** once. It copies `fcmh_academy_export.lua` into Live Editor's
+   `lua` folder and points it at `Documents\FC Mod Helper\Academy`.
+3. In Career Mode press **F9 → Features → Lua Engine**, open `fcmh_academy_export.lua` and press **Execute**.
+4. A message box says how many players were exported and where the CSV went
+   (`fcmh_academy_YYYY-MM-DD.csv`, using the **in-game** date). Without the app, the script writes to your Desktop.
+5. Press **My academy** again to see the report. CSVs left on the Desktop are imported automatically.
+
+The script's source is `src/fcmh/lua/fcmh_academy_export.lua`.
 
 Run it whenever you want a data point, e.g. at the start of each season, at the January window and
 at the end of the season. Running it twice on the same in-game day just overwrites that day's file.
@@ -24,6 +29,8 @@ Settings at the top of the script:
 
 ## 2. Build the growth report
 
+The **My academy** button does this. From the command line:
+
 ```powershell
 fcmh academy report                       # reads academy_dir (Desktop by default)
 fcmh academy report --input D:\FC\academy --out D:\FC\academy\report
@@ -34,7 +41,8 @@ Outputs:
 - `academy-merged.csv`: every snapshot, one row per player per export.
 - `academy-growth.csv`: one row per prospect: first/latest OVR and POT, growth, and one
   `ovr_<season>` column per season (the last snapshot of that season).
-- `academy-growth.md` and `academy-growth.html`: the same table, sorted by OVR growth.
+- `academy-growth.md`: the same table, sorted by OVR growth.
+- `academy-growth.html`: one card per player with a growth arrow and a small OVR/potential chart, plus the full table.
 
 ## CSV columns
 

@@ -150,6 +150,48 @@ def ordered(prospects: dict[str, Prospect]) -> list[Prospect]:
     return sorted(prospects.values(), key=key)
 
 
+def _spark(prospect: Prospect, width: int = 240, height: int = 70) -> str:
+    points = [(s.ovr, s.pot) for s in prospect.snapshots]
+    values = [v for pair in points for v in pair if v is not None]
+    if not values:
+        return ""
+    low, high = min(values) - 2, max(values) + 2
+    span = max(high - low, 1)
+    step = (width - 16) / max(len(points) - 1, 1)
+
+    def xy(i: int, v: int) -> tuple[float, float]:
+        return 8 + i * step, height - 8 - (v - low) / span * (height - 16)
+
+    parts = [f'<svg viewBox="0 0 {width} {height}" role="img" aria-label="growth chart">']
+    for idx, (color, dash) in enumerate((("#1f9d55", ""), ("#3554d1", ' stroke-dasharray="5 4"'))):
+        coords = [xy(i, p[idx]) for i, p in enumerate(points) if p[idx] is not None]
+        if len(coords) > 1:
+            line = " ".join(f"{x:.1f},{y:.1f}" for x, y in coords)
+            parts.append(f'<polyline fill="none" stroke="{color}" stroke-width="3"{dash} points="{line}"/>')
+        for x, y in coords:
+            parts.append(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="3.5" fill="{color}"/>')
+    parts.append("</svg>")
+    return "".join(parts)
+
+
+def _card(prospect: Prospect) -> str:
+    latest, growth = prospect.latest, prospect.growth()
+    if growth is None or growth == 0:
+        arrow, cls = "&#9654; 0", "flat"
+    elif growth > 0:
+        arrow, cls = f"&#9650; +{growth}", "up"
+    else:
+        arrow, cls = f"&#9660; {growth}", "down"
+    meta = " &middot; ".join(html.escape(x) for x in (latest.position, f"age {latest.age}" if latest.age is not None else "", latest.team) if x)
+    return (f'<div class="card"><h2>{html.escape(latest.name or prospect.playerid)}</h2>'
+            f'<div class="meta">{meta}</div>'
+            f'<div class="nums"><span class="big">{_fmt(latest.ovr)}</span>'
+            f'<span class="arrow {cls}">{arrow}</span>'
+            f'<span class="pot">potential {_fmt(latest.pot)}</span></div>'
+            f'{_spark(prospect)}'
+            f'<div class="meta">{len(prospect.snapshots)} exports, since {html.escape(prospect.first.export_date)}</div></div>')
+
+
 def write_report(prospects: dict[str, Prospect], out_dir: Path) -> dict[str, Path]:
     out_dir.mkdir(parents=True, exist_ok=True)
     seasons = seasons_of(prospects)
@@ -202,8 +244,9 @@ def write_report(prospects: dict[str, Prospect], out_dir: Path) -> dict[str, Pat
         attr = f' class="{cls}"' if cls else ""
         return f"<{tag}{attr}>{html.escape(text)}</{tag}>"
 
+    cards = "\n".join(_card(p) for p in ordered(prospects))
+    table_rows = []
     growth_idx = header.index("ovr_growth")
-    body = []
     for row in rows:
         cells = []
         for i, value in enumerate(row):
@@ -211,21 +254,42 @@ def write_report(prospects: dict[str, Prospect], out_dir: Path) -> dict[str, Pat
             if i == growth_idx and value:
                 cls = "up" if value.startswith("+") and value != "+0" else ("down" if value.startswith("-") else "")
             cells.append(cell("td", value, cls))
-        body.append("<tr>" + "".join(cells) + "</tr>")
+        table_rows.append("<tr>" + "".join(cells) + "</tr>")
     page = f"""<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><title>Academy growth report</title>
+<html lang="en"><head><meta charset="utf-8"><title>My academy</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-body{{font-family:system-ui,sans-serif;margin:1.5rem;color:#1d1d1f}}
-table{{border-collapse:collapse;font-size:14px}}th,td{{border:1px solid #ccc;padding:4px 8px;text-align:left}}
-th{{background:#f2f2f2;position:sticky;top:0}}td.up{{color:#0a7a2f;font-weight:600}}td.down{{color:#b00020}}
+body{{font-family:"Segoe UI",system-ui,sans-serif;margin:0;background:#f4f6fb;color:#1d2433}}
+header{{background:#1f7a4d;color:#fff;padding:24px 32px}}header h1{{margin:0;font-size:30px}}
+header p{{margin:6px 0 0;font-size:17px;opacity:.9}}
+main{{padding:24px 32px}}
+.grid{{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:16px}}
+.card{{background:#fff;border-radius:14px;padding:16px 18px;box-shadow:0 2px 8px rgba(0,0,0,.08)}}
+.card h2{{margin:0 0 2px;font-size:19px}}.meta{{color:#5b6475;font-size:14px}}
+.nums{{display:flex;gap:18px;align-items:baseline;margin:10px 0 6px}}
+.big{{font-size:34px;font-weight:700}}.arrow{{font-size:20px;font-weight:700}}
+.up{{color:#1f9d55}}.down{{color:#c62828}}.flat{{color:#8a93a6}}
+.pot{{font-size:15px;color:#3554d1}}
+svg{{width:100%;height:70px}}
+.legend{{font-size:12px;color:#5b6475}}
+details{{margin-top:28px}}summary{{cursor:pointer;font-size:17px}}
+table{{border-collapse:collapse;font-size:14px;background:#fff;margin-top:10px}}
+th,td{{border:1px solid #d6dbe6;padding:4px 8px;text-align:left}}th{{background:#eef1f7}}
+td.up{{font-weight:600}}
 </style></head><body>
-<h1>Academy growth report</h1>
-<p>{len(prospects)} prospects &middot; seasons: {html.escape(', '.join(seasons) or '-')}. Sorted by OVR growth.</p>
+<header><h1>My academy</h1>
+<p>{len(prospects)} players &middot; seasons: {html.escape(', '.join(seasons) or '-')} &middot; biggest growth first</p></header>
+<main>
+<div class="grid">
+{cards}
+</div>
+<p class="legend">Green line = overall rating, dashed blue line = potential, one dot per export.</p>
+<details><summary>Show the full table</summary>
 <table><thead><tr>{''.join(cell('th', h) for h in header)}</tr></thead>
 <tbody>
-{chr(10).join(body)}
-</tbody></table>
+{chr(10).join(table_rows)}
+</tbody></table></details>
+</main>
 </body></html>
 """
     paths["html"].write_text(page, encoding="utf-8")

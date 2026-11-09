@@ -99,6 +99,7 @@ class Ledger:
     exe_version: str = ""
     paths: dict = field(default_factory=dict)
     mods: list[Mod] = field(default_factory=list)
+    app: dict = field(default_factory=dict)
     location: Path | None = None
 
     # ---- loading / saving -------------------------------------------------
@@ -123,6 +124,7 @@ class Ledger:
             exe_version=str(data.get("exe_version", "")),
             paths=dict(paths),
             mods=mods,
+            app=dict(data.get("app") or {}),
             location=location,
         )
 
@@ -150,6 +152,7 @@ class Ledger:
             "exe_version": self.exe_version,
             "paths": self.paths,
             "mods": [m.to_dict() for m in self.mods],
+            "app": self.app,
         }
 
     def save(self, path: str | os.PathLike | None = None) -> Path:
